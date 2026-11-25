@@ -701,7 +701,6 @@ export default function App() {
   const isModern = palette.isModern;
   const isRedAlert = redAlertFlash || (hiitMode && hiitPhase === 'WORK' && timerActive);
 
-  // Responsive column dimensions calculated cleanly in JS so headers & rows never misalign
   const exColWidth = isMobile ? 114 : 185;
   const setColWidth = isMobile ? 44 : 58;
 
@@ -1508,8 +1507,10 @@ export default function App() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Orbitron:wght@600;800&family=Rajdhani:wght@600;700&display=swap');
         * { box-sizing: border-box; }
-        body {
+        html, body {
           margin: 0;
+          max-width: 100%;
+          overflow-x: hidden;
           background: ${palette.bgMain};
           color: ${palette.elbowPrimary};
           font-family: 'Rajdhani', sans-serif;
@@ -1575,15 +1576,15 @@ export default function App() {
           padding: 8px 10px;
         }
 
-        .lcars-shell { display: flex; gap: 10px; flex: 1; }
+        .lcars-shell { display: flex; gap: 10px; flex: 1; min-width: 0; }
         .lcars-sidebar { width: 178px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
         .lcars-top-elbow-corner { width: 178px; flex-shrink: 0; }
         .warp-chamber-stack { display: flex; flex-direction: column; gap: 5px; align-items: center; }
         .warp-segment { width: 84%; height: 10px; border-radius: ${themeKey === 'borg' || themeKey === 'imperial' ? '2px' : '999px'}; }
 
         @media (max-width: 768px) {
-          .lcars-shell { flex-direction: column; }
           .lcars-top-elbow-corner { display: none; }
+          .lcars-shell { flex-direction: column; }
           .lcars-sidebar {
             width: 100%;
             flex-direction: row;
@@ -1592,29 +1593,30 @@ export default function App() {
             background: rgba(16, 20, 28, 0.95);
             border: 1px solid ${palette.accentCool};
             border-radius: 8px;
-            padding: 8px;
-            gap: 6px;
+            padding: 6px;
+            gap: 5px;
           }
           .lcars-sidebar > button {
-            flex: 1 1 calc(33.33% - 6px);
+            flex: 1 1 calc(33.33% - 4px);
+            min-width: 0;
             text-align: center !important;
-            padding: 9px 6px !important;
-            font-size: 11px !important;
+            padding: 8px 4px !important;
+            font-size: 10px !important;
           }
           .warp-core-card {
             width: 100% !important;
             display: flex !important;
             align-items: center !important;
             justify-content: space-between !important;
-            padding: 6px 12px !important;
+            padding: 6px 10px !important;
           }
           .warp-chamber-stack {
             flex-direction: row !important;
-            gap: 5px !important;
+            gap: 4px !important;
           }
           .warp-segment {
-            width: 18px !important;
-            height: 11px !important;
+            width: 16px !important;
+            height: 9px !important;
           }
           .lcars-table textarea {
             font-size: 13px !important;
@@ -1679,6 +1681,7 @@ export default function App() {
               isModern
                 ? {
                     ...styles.topBarModern,
+                    padding: isMobile ? '7px 10px' : '8px 18px',
                     borderBottom: topDividerGlow,
                     boxShadow: isRedAlert
                       ? '0 2px 18px rgba(255, 42, 42, 0.6)'
@@ -1686,12 +1689,13 @@ export default function App() {
                   }
                 : {
                     ...styles.topBar,
+                    padding: isMobile ? '7px 12px' : '8px 20px',
                     background: `linear-gradient(180deg, ${elbowMainColor} 0%, ${elbowMainColor}AA 100%)`,
                     boxShadow: `0 0 18px ${elbowMainColor}44`,
                   }
             }
           >
-            <div style={styles.titleEditContainer}>
+            <div style={{ ...styles.titleEditContainer, maxWidth: '100%', minWidth: 0 }}>
               {isEditingTitle ? (
                 <input
                   autoFocus
@@ -1707,18 +1711,23 @@ export default function App() {
                       playLcarsChirp(1046, 0.05);
                     }
                   }}
-                  style={styles.missionTitleInput}
+                  style={{
+                    ...styles.missionTitleInput,
+                    fontSize: isMobile ? '13px' : '18px',
+                    width: isMobile ? '100%' : '340px',
+                  }}
                 />
               ) : (
                 <div
                   onClick={() => setIsEditingTitle(true)}
                   title="Click to edit mission title"
-                  style={styles.headerTitleWrapper}
+                  style={{ ...styles.headerTitleWrapper, maxWidth: '100%' }}
                 >
                   <span
                     style={{
                       ...styles.headerTitle,
-                      fontSize: isMobile ? '15px' : '20px',
+                      fontSize: isMobile ? '13px' : '20px',
+                      lineHeight: isMobile ? '1.2' : '1.3',
                       color: isModern ? palette.elbowPrimary : '#000',
                       textShadow: isModern
                         ? `0 2px 4px #000, 0 0 12px ${palette.elbowPrimary}88`
@@ -1732,18 +1741,21 @@ export default function App() {
               )}
             </div>
 
-            <div style={styles.topRightTelemetry}>
+            <div style={{ ...styles.topRightTelemetry, width: isMobile ? '100%' : 'auto', gap: isMobile ? '5px' : '8px' }}>
               {isRedAlert && <div style={styles.redAlertPill}>RED ALERT</div>}
 
               <div
                 style={{
                   ...styles.controlPillGroup,
+                  width: isMobile ? '100%' : 'auto',
+                  justifyContent: 'space-between',
+                  padding: isMobile ? '3px 8px' : '3px 10px',
                   backgroundColor: isModern ? 'rgba(0,0,0,0.58)' : 'rgba(0,0,0,0.25)',
                   border: isModern ? `1px solid ${palette.metalSheen}` : 'none',
                   color: isModern ? palette.textMain : '#000',
                 }}
               >
-                <span style={{ fontSize: '12px', fontWeight: 700, letterSpacing: '0.8px' }}>ALLOY:</span>
+                <span style={{ fontSize: isMobile ? '10px' : '12px', fontWeight: 700, letterSpacing: '0.6px', flexShrink: 0 }}>ALLOY:</span>
                 <select
                   value={themeKey}
                   onChange={(e) => {
@@ -1752,6 +1764,9 @@ export default function App() {
                   }}
                   style={{
                     ...styles.lcarsSelect,
+                    maxWidth: isMobile ? '76vw' : 'none',
+                    fontSize: isMobile ? '10px' : '11px',
+                    padding: isMobile ? '2px 5px' : '2px 8px',
                     color: palette.highlight,
                     borderColor: palette.highlight,
                   }}
@@ -1767,12 +1782,15 @@ export default function App() {
               <div
                 style={{
                   ...styles.controlPillGroup,
+                  width: isMobile ? '100%' : 'auto',
+                  justifyContent: 'space-between',
+                  padding: isMobile ? '3px 8px' : '3px 10px',
                   backgroundColor: isModern ? 'rgba(0,0,0,0.58)' : 'rgba(0,0,0,0.25)',
                   border: isModern ? `1px solid ${palette.metalSheen}` : 'none',
                   color: isModern ? palette.textMain : '#000',
                 }}
               >
-                <span style={{ fontSize: '12px', fontWeight: 700, letterSpacing: '0.8px' }}>DATE:</span>
+                <span style={{ fontSize: isMobile ? '10px' : '12px', fontWeight: 700, letterSpacing: '0.6px', flexShrink: 0 }}>DATE:</span>
                 <select
                   value={selectedWeek?.id || ''}
                   onChange={(e) => {
@@ -1781,6 +1799,8 @@ export default function App() {
                   }}
                   style={{
                     ...styles.lcarsSelect,
+                    fontSize: isMobile ? '10px' : '11px',
+                    padding: isMobile ? '2px 5px' : '2px 8px',
                     color: palette.highlight,
                     borderColor: palette.highlight,
                   }}
@@ -1791,7 +1811,14 @@ export default function App() {
                     </option>
                   ))}
                 </select>
-                <span style={{ ...styles.tonnageBadge, color: palette.accentWarm }}>
+                <span
+                  style={{
+                    ...styles.tonnageBadge,
+                    fontSize: isMobile ? '11px' : '13px',
+                    padding: isMobile ? '2px 7px' : '3px 10px',
+                    color: palette.accentWarm,
+                  }}
+                >
                   {selectedWeekTonnage.toLocaleString()} LBS
                 </span>
               </div>
@@ -1799,7 +1826,7 @@ export default function App() {
           </div>
 
           <div style={styles.microTickStrip}>
-            {Array.from({ length: 42 }).map((_, idx) => {
+            {Array.from({ length: isMobile ? 28 : 42 }).map((_, idx) => {
               const isLit = (idx * 7 + tickSeed) % 5 === 0 || (timerActive && idx % 3 === 0);
               const isHot = (idx + tickSeed) % 11 === 0;
               const tickColor = isHot ? palette.tickHot : palette.elbowPrimary;
@@ -1808,7 +1835,7 @@ export default function App() {
                   key={idx}
                   style={{
                     flex: 1,
-                    height: '5px',
+                    height: isMobile ? '4px' : '5px',
                     borderRadius: '1px',
                     backgroundColor: isLit || isHot ? tickColor : `${palette.elbowPrimary}22`,
                     boxShadow: isLit || isHot ? `0 0 6px ${tickColor}` : 'none',
@@ -1851,7 +1878,7 @@ export default function App() {
                 </div>
               </div>
 
-              <div className="warp-chamber-stack" style={{ width: '100%' }}>
+              <div className="warp-chamber-stack" style={{ width: isMobile ? 'auto' : '100%' }}>
                 {[0, 1, 2, 3, 4, 5].map((segment) => {
                   const isCenterChamber = segment === 2 || segment === 3;
                   return (
@@ -2810,29 +2837,29 @@ export default function App() {
 }
 
 const styles = {
-  container: { minHeight: '100vh', padding: '10px', display: 'flex', flexDirection: 'column', gap: '8px' },
-  topElbowWrapper: { display: 'flex', alignItems: 'stretch', gap: '6px' },
+  container: { minHeight: '100vh', width: '100%', maxWidth: '100%', overflowX: 'hidden', padding: '10px', display: 'flex', flexDirection: 'column', gap: '8px' },
+  topElbowWrapper: { display: 'flex', alignItems: 'stretch', gap: '6px', width: '100%', maxWidth: '100%', minWidth: 0 },
   sweepingCornerOuter: { borderTopLeftRadius: '64px', paddingLeft: '24px', paddingTop: '14px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' },
   sweepingCornerInnerCutout: { borderTopLeftRadius: '28px', flex: 1, padding: '8px 10px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', gap: '2px' },
   gunmetalCornerOuter: { padding: '4px', display: 'flex', flexDirection: 'column' },
   gunmetalCornerInner: { flex: 1, padding: '8px 10px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', gap: '2px' },
-  topConduitColumn: { flex: 1, display: 'flex', flexDirection: 'column', gap: '5px' },
-  topBar: { flex: 1, borderTopRightRadius: '999px', borderBottomRightRadius: '999px', padding: '8px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#000', flexWrap: 'wrap', gap: '8px' },
-  topBarModern: { flex: 1, padding: '8px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', borderTopRightRadius: '8px' },
-  microTickStrip: { height: '7px', display: 'flex', gap: '3px', alignItems: 'center', padding: '1px 2px', backgroundColor: 'rgba(0,0,0,0.55)' },
-  titleEditContainer: { display: 'flex', alignItems: 'center' },
-  headerTitleWrapper: { display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', padding: '2px 6px', borderRadius: '6px' },
-  headerTitle: { fontFamily: "'Orbitron', sans-serif", fontSize: '20px', fontWeight: 800, letterSpacing: '1.2px' },
-  titleEditBadge: { backgroundColor: '#000', color: '#FF9900', fontSize: '12px', padding: '2px 6px', borderRadius: '4px' },
+  topConduitColumn: { flex: 1, minWidth: 0, maxWidth: '100%', display: 'flex', flexDirection: 'column', gap: '5px' },
+  topBar: { flex: 1, minWidth: 0, maxWidth: '100%', borderTopRightRadius: '999px', borderBottomRightRadius: '999px', padding: '8px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#000', flexWrap: 'wrap', gap: '8px' },
+  topBarModern: { flex: 1, minWidth: 0, maxWidth: '100%', padding: '8px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', borderTopRightRadius: '8px' },
+  microTickStrip: { height: '7px', width: '100%', maxWidth: '100%', display: 'flex', gap: '3px', alignItems: 'center', padding: '1px 2px', backgroundColor: 'rgba(0,0,0,0.55)' },
+  titleEditContainer: { display: 'flex', alignItems: 'center', minWidth: 0 },
+  headerTitleWrapper: { display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', padding: '2px 4px', borderRadius: '6px', minWidth: 0 },
+  headerTitle: { fontFamily: "'Orbitron', sans-serif", fontSize: '20px', fontWeight: 800, letterSpacing: '1px' },
+  titleEditBadge: { backgroundColor: '#000', color: '#FF9900', fontSize: '11px', padding: '2px 5px', borderRadius: '4px', flexShrink: 0 },
   missionTitleInput: { backgroundColor: '#000', color: '#00E5FF', border: '1px solid #00E5FF', borderRadius: '6px', fontFamily: "'Orbitron', sans-serif", fontSize: '18px', fontWeight: 700, padding: '3px 10px', width: '340px', maxWidth: '100%' },
-  topRightTelemetry: { display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' },
+  topRightTelemetry: { display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', maxWidth: '100%', minWidth: 0 },
   redAlertPill: { fontFamily: "'Orbitron', sans-serif", backgroundColor: '#000', color: '#FF2A2A', border: '1px solid #FF2A2A', borderRadius: '4px', padding: '3px 10px', fontSize: '11px', fontWeight: 800, letterSpacing: '1.5px', animation: 'redAlertBlink 0.7s infinite' },
-  controlPillGroup: { display: 'flex', alignItems: 'center', gap: '6px', padding: '3px 10px', borderRadius: '6px' },
-  lcarsSelect: { backgroundColor: 'rgba(0,0,0,0.8)', border: '1px solid #00E5FF', borderRadius: '4px', padding: '2px 8px', fontFamily: "'JetBrains Mono', monospace", fontSize: '11px', fontWeight: 700, cursor: 'pointer' },
-  tonnageBadge: { fontFamily: "'JetBrains Mono', monospace", backgroundColor: 'rgba(0,0,0,0.8)', padding: '3px 10px', borderRadius: '4px', fontSize: '13px', fontWeight: 700, letterSpacing: '0.5px' },
+  controlPillGroup: { display: 'flex', alignItems: 'center', gap: '6px', padding: '3px 10px', borderRadius: '6px', maxWidth: '100%', minWidth: 0 },
+  lcarsSelect: { backgroundColor: 'rgba(0,0,0,0.8)', border: '1px solid #00E5FF', borderRadius: '4px', padding: '2px 8px', fontFamily: "'JetBrains Mono', monospace", fontSize: '11px', fontWeight: 700, cursor: 'pointer', minWidth: 0 },
+  tonnageBadge: { fontFamily: "'JetBrains Mono', monospace", backgroundColor: 'rgba(0,0,0,0.8)', padding: '3px 10px', borderRadius: '4px', fontSize: '13px', fontWeight: 700, letterSpacing: '0.5px', whiteSpace: 'nowrap', flexShrink: 0 },
   warpCoreHousing: { padding: '6px', textAlign: 'center' },
   lcarsBtn: { padding: '9px 12px', fontFamily: "'Orbitron', sans-serif", fontSize: '11px', fontWeight: 700, cursor: 'pointer', textAlign: 'right', letterSpacing: '0.8px' },
-  workspace: { flex: 1, display: 'flex', flexDirection: 'column', gap: '10px', overflow: 'hidden' },
+  workspace: { flex: 1, minWidth: 0, maxWidth: '100%', display: 'flex', flexDirection: 'column', gap: '10px', overflow: 'hidden' },
   hiddenDrawer: { borderRadius: '8px', padding: '10px 14px', display: 'flex', flexDirection: 'column', gap: '8px' },
   hiddenDrawerHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#FF9966', fontSize: '13px', fontWeight: 700, letterSpacing: '0.8px' },
   closeDrawerBtn: { backgroundColor: '#331111', color: '#FF7777', border: '1px solid #FF5555', borderRadius: '4px', padding: '2px 10px', cursor: 'pointer', fontFamily: "'JetBrains Mono', monospace", fontSize: '11px' },
@@ -2842,25 +2869,25 @@ const styles = {
   restoreNotesPill: { backgroundColor: '#9999FF', color: '#000', border: 'none', borderRadius: '4px', padding: '5px 12px', fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, fontSize: '12px', cursor: 'pointer' },
   driveUrlInput: { flex: '1 1 320px', backgroundColor: 'rgba(0,0,0,0.75)', color: '#38E8FF', border: '1px solid #38E8FF', borderRadius: '4px', padding: '6px 10px', fontFamily: "'JetBrains Mono', monospace", fontSize: '12px' },
   driveToggleBtn: { border: '1px solid', borderRadius: '4px', padding: '6px 12px', fontFamily: "'JetBrains Mono', monospace", fontSize: '11px', fontWeight: 700, cursor: 'pointer' },
-  telemetryRow: { display: 'flex', flexWrap: 'wrap', gap: '10px' },
-  timerBox: { flex: '1 1 285px', padding: '7px', display: 'flex', flexDirection: 'column', justifyContent: 'center' },
+  telemetryRow: { display: 'flex', flexWrap: 'wrap', gap: '10px', maxWidth: '100%' },
+  timerBox: { flex: '1 1 285px', minWidth: 0, maxWidth: '100%', padding: '7px', display: 'flex', flexDirection: 'column', justifyContent: 'center' },
   timerControls: { display: 'flex', flexWrap: 'wrap', gap: '5px' },
   pillBtn: { padding: '5px 9px', fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, fontSize: '11px', cursor: 'pointer' },
-  oneRmBox: { flex: '1 1 360px', padding: '7px', display: 'flex', flexDirection: 'column' },
+  oneRmBox: { flex: '1 1 360px', minWidth: 0, maxWidth: '100%', padding: '7px', display: 'flex', flexDirection: 'column' },
   oneRmHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', letterSpacing: '0.8px', fontWeight: 700 },
   oneRmGrid: { display: 'flex', flexWrap: 'wrap', gap: '6px' },
   oneRmChip: { border: '1px solid #806B00', borderRadius: '5px', padding: '5px 9px', flex: '1 1 125px', boxShadow: 'inset 0 1px 4px rgba(0,0,0,0.8)' },
   oneRmValueRow: { display: 'flex', alignItems: 'baseline', gap: '6px', marginTop: '2px' },
   oneRmBigNum: { fontFamily: "'JetBrains Mono', monospace", fontSize: '15px', fontWeight: 700 },
-  quoteBoxFull: { width: '100%', padding: '7px' },
+  quoteBoxFull: { width: '100%', maxWidth: '100%', minWidth: 0, padding: '7px' },
   hailFilterBtn: { fontFamily: "'JetBrains Mono', monospace", fontSize: '9px', fontWeight: 700, padding: '2px 7px', borderRadius: '3px', border: '1px solid', cursor: 'pointer', letterSpacing: '0.5px' },
-  tabBar: { display: 'flex', flexWrap: 'wrap', gap: '6px', borderBottom: '2px solid #FF9900', paddingBottom: '6px', alignItems: 'center' },
-  tabPill: { display: 'flex', alignItems: 'center', gap: '4px', padding: '6px 12px', fontFamily: "'Orbitron', sans-serif", fontSize: '12px', fontWeight: 700, cursor: 'pointer', letterSpacing: '0.8px' },
+  tabBar: { display: 'flex', flexWrap: 'wrap', gap: '6px', borderBottom: '2px solid #FF9900', paddingBottom: '6px', alignItems: 'center', maxWidth: '100%' },
+  tabPill: { display: 'flex', alignItems: 'center', gap: '4px', padding: '6px 12px', fontFamily: "'Orbitron', sans-serif", fontSize: '12px', fontWeight: 700, cursor: 'pointer', letterSpacing: '0.8px', maxWidth: '100%' },
   tabOrderBtn: { backgroundColor: 'rgba(0,0,0,0.65)', color: '#FF9900', border: 'none', borderRadius: '4px', fontSize: '10px', padding: '2px 5px', cursor: 'pointer' },
   tabEditBtn: { backgroundColor: 'rgba(0,0,0,0.65)', color: '#00E5FF', border: 'none', borderRadius: '4px', fontSize: '11px', padding: '1px 5px', cursor: 'pointer' },
   tabDelBtn: { backgroundColor: '#3B0D0D', color: '#FF6666', border: '1px solid #FF4444', borderRadius: '4px', fontSize: '10px', padding: '1px 5px', cursor: 'pointer', marginLeft: '2px' },
   tabRenameInput: { backgroundColor: '#000', color: '#00E5FF', border: '1px solid #00E5FF', borderRadius: '4px', fontFamily: "'Orbitron', sans-serif", fontSize: '12px', fontWeight: 700, padding: '1px 6px', width: '130px' },
-  tableScroll: { overflowX: 'auto', borderRadius: '8px', padding: '3px' },
+  tableScroll: { overflowX: 'auto', maxWidth: '100%', borderRadius: '8px', padding: '3px' },
   table: { width: '100%', borderCollapse: 'collapse' },
   stickyExerciseTh: { position: 'sticky', left: 0, zIndex: 3, color: '#000', borderRight: '2px solid #000', borderBottom: '2px solid #000', textAlign: 'center', fontFamily: "'Orbitron', sans-serif", fontWeight: 800, letterSpacing: '1px' },
   stickySetTh: { position: 'sticky', zIndex: 3, color: '#000', borderRight: '3px solid #000', borderBottom: '2px solid #000', textAlign: 'center', fontFamily: "'Orbitron', sans-serif", fontWeight: 800 },
